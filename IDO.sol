@@ -68,7 +68,7 @@ contract IDO is Ownable,ReentrancyGuard {
         _signer = signer;
     }
 
-    function getInfto() external view returns (uint256, uint256, uint256, uint, uint256) {
+    function getInfo() external view returns (uint256, uint256, uint256, uint, uint256) {
         return (_totalIdo, _idoAmount, _joiners, _currRound, getCurrPrice());
     }
 
