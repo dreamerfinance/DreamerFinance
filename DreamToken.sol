@@ -32,6 +32,7 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
     uint256 private _mSurplus;
     uint256 private _mUsed;
     uint256 public _startM;
+    bool public _isMining;
     mapping(uint => uint256) public _mLimit;
     mapping(address => uint256) public _uM;
     event Mining(address indexed user, uint256 amount, uint256 fee, uint256 nonce);
@@ -49,6 +50,7 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
 
     function setStartMining(uint256 startBlock) external onlyOwner {
         _startM = startBlock;
+        _isMining = true;
     }
 
     function setMonthLimit(uint[] memory months,uint256[] memory amounts) external onlyOwner {
@@ -56,6 +58,10 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
         for (uint i = 0; i < months.length; i++){
             _mLimit[months[i]] = amounts[i];
         }
+    }
+
+    function getMonthLimit(uint month) public view returns (uint256){
+        return _mLimit[month] * 10**18;
     }
 
     function getNonces(address owner) public view returns (uint) {
@@ -125,11 +131,14 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
     }
 
     function mint(address to, uint256 amount, uint256 blockNum, uint256 nonce, bytes memory signature) external {
+        require(_isMining,'Mining no start!');
         require(blockNum > _startM, 'Mining no start!');
         require(blockNum > _uM[to], 'This blocknum is already taked!'); 
         require(_mUsed.add(amount) <= _mTotalSupply,'MiningTotalSupply limit!');
-        uint month = (blockNum - block.number) / (28800 * 30)  + 1;
-        require(_mUsed.add(amount) <= _mLimit[month] ,'Month mining limit!');             
+        uint month = (blockNum - block.number) / (28800 * 30);
+        uint p = (blockNum - block.number) % (28800 * 30) + 1;
+        uint limit = p * (_mLimit[month+1] - _mLimit[month]) * 10**18 / 30;
+        require(_mUsed.add(amount) <= limit ,'Mining limit!');             
         _verify(nonce,signature,abi.encodePacked(to, amount,blockNum, nonce)); 
         _mSurplus = _mSurplus.sub(amount);
         _mUsed = _mUsed.add(amount);

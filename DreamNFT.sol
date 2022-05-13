@@ -178,7 +178,7 @@ contract DreamNFT is ERC1155, Ownable {
         _verify(
             nonce,
             signature,
-            abi.encodePacked(to, kinds, limits, coin, coinAmount, nonce)
+            abi.encodePacked(to, grouper, kinds, limits, coin, coinAmount, nonce)
         );
 
         if (coinAmount > 0 && grouper == address(0)) {
