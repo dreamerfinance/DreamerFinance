@@ -41,31 +41,38 @@ contract Multicall {
         coinbase = block.coinbase;
     }
 
-    function getEthBlances(address[] memory addr) public view virtual returns (uint256[] memory balances) {
-        for (uint8 i = 0 ; i <= addr.length - 1 ;i++) {          
+    function getEthBlances(address[] memory addr) public view virtual returns (uint256[] memory) {
+        uint256[] memory balances = new uint[](addr.length);
+        for (uint i = 0 ; i <= addr.length - 1 ;i++) {          
             balances[i] = addr[i].balance;
         }
+        return balances;
     }
 
     // EIP20
-    function getEIP20Balances0(address[] memory addr,address token) public view virtual returns (uint256[] memory balances) { 
-        for (uint8 i = 0 ; i <= addr.length - 1 ;i++) {          
+    function getEIP20Balances0(address[] memory addr,address token) public view virtual returns (uint256[] memory) { 
+        uint256[] memory balances = new uint[](addr.length);
+        for (uint i = 0 ; i <= addr.length - 1 ;i++) {          
             balances[i] = Iinterface(token).balanceOf(addr[i]);
         }
         return balances;
     }
 
-    function getEIP20Balances1(address addr,address[] memory token) public view virtual returns (uint256[] memory balances) { 
-        for (uint8 i = 0 ; i <= token.length - 1 ;i++) {          
+    function getEIP20Balances1(address addr,address[] memory token) public view virtual returns (uint256[] memory) { 
+        uint256[] memory balances = new uint[](token.length);
+        for (uint i = 0 ; i <= token.length - 1 ;i++) {          
             balances[i] = Iinterface(token[i]).balanceOf(addr);
         }
+        return balances;
     }
 
-    function getEIP20Balances2(address[] memory addr,address[] memory token) public view virtual returns (uint256[] memory balances) { 
+    function getEIP20Balances2(address[] memory addr,address[] memory token) public view virtual returns (uint256[] memory) { 
+        uint256[] memory balances = new uint[](addr.length);
         require(addr.length == token.length,'Parma err!');
-        for (uint8 i = 0 ; i <= token.length - 1 ;i++) {          
+        for (uint i = 0 ; i <= token.length - 1 ;i++) {          
             balances[i] = Iinterface(token[i]).balanceOf(addr[i]);
         }
+        return balances;
     }
 
 }
