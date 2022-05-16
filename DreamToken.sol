@@ -26,7 +26,9 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
     mapping(address => bool) private _tbList; //to black list
     mapping(uint256 => bool) private _nonces;
     address private _signer;
-    address private _taxer;
+    address public _taxer;
+    address public _mTaxer;
+    address public _sTaxer;
     uint8 private _taxFeeRate;
     uint256 private _mTotalSupply;
     uint256 private _mSurplus;
@@ -37,12 +39,14 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
     mapping(address => uint256) public _uM;
     event Mining(address indexed user, uint256 amount, uint256 fee, uint256 nonce);
 
-    constructor(string memory name_, string memory symbol_, address signer_, address taxer_) {
+    constructor(string memory name_, string memory symbol_, address signer_, address taxer_, address mTaxer_, address sTaxer_) {
         _name = name_;
         _symbol = symbol_;
         _signer = signer_;
         _taxer = taxer_;
         _taxFeeRate = 10;
+        _mTaxer = mTaxer_;
+        _sTaxer = sTaxer_;
         _mTotalSupply = 990000000 * 10 ** uint(decimals());
         _mSurplus = 990000000 * 10 ** uint(decimals());        
         _mint(msg.sender, 10000000 * 10 ** uint(decimals()));
@@ -86,6 +90,14 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
 
     function setTaxer(address taxer) external onlyOwner {
         _taxer = taxer;
+    }
+
+    function setmTaxer(address mTaxer) external onlyOwner {
+        _mTaxer = mTaxer;
+    }
+
+    function setsTaxer(address sTaxer) external onlyOwner {
+        _sTaxer = sTaxer;
     }
 
     function setFwList(address[] memory fs_) external onlyOwner {
@@ -142,9 +154,17 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
         _verify(nonce,signature,abi.encodePacked(to, amount,blockNum, nonce)); 
         _mSurplus = _mSurplus.sub(amount);
         _mUsed = _mUsed.add(amount);
-        uint256 fee = amount / 10;
-        _mint(to,amount.sub(fee));
-        _mint(_taxer,fee);
+        uint256 fee;
+        uint256 mFee;
+        if (to == _taxer || to == _mTaxer) {
+            _mint(to,amount);
+        }else{
+            mFee = amount / 20;
+            fee = mFee * 2;
+            _mint(_taxer,mFee);
+            _mint(_mTaxer,mFee);
+            _mint(to,amount.sub(fee));
+        }        
         emit Mining(to, amount, fee, nonce);
     }
 
@@ -164,10 +184,10 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
             _balances[from] = fromBalance - amount ;
         }
         uint256 toAmount = amount - takeFee;
-        _balances[_taxer] += takeFee;
+        _balances[_sTaxer] += takeFee;
         _balances[to] += toAmount;
 
-        emit Transfer(from, _taxer, takeFee);
+        emit Transfer(from, _sTaxer, takeFee);
         emit Transfer(from, to, toAmount);
 
         _afterTokenTransfer(from, to, amount);

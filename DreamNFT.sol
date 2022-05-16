@@ -22,7 +22,7 @@ contract DreamNFT is ERC1155, Ownable {
 
     event Success(uint256 nonce);
 
-    constructor(address treasury, address signer) public ERC1155("https://gateway.pinata.cloud/ipfs/QmVzTErJP9Wzsmd6LWJbBzvwua1xoUWwZPq63N6vSgKZNq/{id}.json") {
+    constructor(address treasury, address signer) public ERC1155("https://gateway.pinata.cloud/ipfs/QmVkTErJP9Wzsmd6LWJbBzvwub1xoUWwZPq36N9vSgKZMq/{id}.json") {
         _treasury = treasury;
         _signer = signer;
     }
@@ -225,6 +225,14 @@ contract DreamNFT is ERC1155, Ownable {
             _tokenToKind[_idCounter] = kind;
         }
         _kindAmounts[kind] += accounts.length;
+    }
+
+    function totalSupply(uint256 kind) public view returns (uint256) {
+        return _kindAmounts[kind];
+    }
+
+    function getKind(uint256 token) public view returns (uint256) {
+        return _tokenToKind[token];
     }
 
 }
