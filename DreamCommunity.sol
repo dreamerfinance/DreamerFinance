@@ -37,6 +37,7 @@ contract DreamCommunity is ReentrancyGuard {
     }
 
     function communityWithPermit(address to,uint256 amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external nonReentrant {
+        require(to != address(0) && to != msg.sender,'addr err!');
         require(!_relation[to].isUsed,'check err!');
         _relation[to].direct = msg.sender;
         _relation[to].isUsed = true;
@@ -51,6 +52,7 @@ contract DreamCommunity is ReentrancyGuard {
     }
 
     function community(address to) external nonReentrant {
+        require(to != address(0) && to != msg.sender,'addr err!');
         require(!_relation[to].isUsed,'check err!');
         _relation[to].direct = msg.sender;
         _relation[to].isUsed = true;
