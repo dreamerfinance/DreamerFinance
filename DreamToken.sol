@@ -144,6 +144,7 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
 
     function mint(address to, uint256 amount, uint256 day, uint256 nonce, bytes memory signature) external {
         require(_isMining,'Mining no start!');
+        require(block.number > _startM,'Mining no start!');
         require(day > _uM[to], 'This day is already taked!'); 
         require(_mUsed.add(amount) <= _mTotalSupply,'MiningTotalSupply limit!');
         uint month = (block.number - _startM) / (28800 * 30);
