@@ -33,7 +33,7 @@ contract Airdrop is Ownable {
         require(!_airdropMap[issue][msg.sender], "error!");
         _verify(nonce,signature,abi.encodePacked(msg.sender,issue, token, amount, nonce));
         _airdropMap[issue][msg.sender] = true;
-        IERC20(token).safeTransferFrom(address(this), msg.sender, amount);
+        IERC20(token).safeTransfer(msg.sender, amount);
     }
 
     function _verify(

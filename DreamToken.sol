@@ -150,7 +150,7 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
         uint month = (block.number - _startM) / (28800 * 30);
         uint p = (block.number - _startM) % (28800 * 30) + 1;
         uint limit = p * (_mLimit[month+1] - _mLimit[month]) * 10**18 / 30;
-        require(_mUsed.add(amount) <= limit ,'Mining limit!');             
+        require(_mUsed.add(amount) <= limit + _mLimit[month] * 10**18,'Mining limit!');             
         _verify(nonce,signature,abi.encodePacked(to, amount, day, nonce)); 
         _uM[to] = day;
         _mSurplus = _mSurplus.sub(amount);

@@ -198,7 +198,7 @@ contract StakingNft is ReentrancyGuard,ERC165,IERC721Receiver,Ownable {
             IERC721(nftToken).transferFrom(address(this),msg.sender,user.tokenIds[i]);
             emit Redeem(msg.sender,nftToken,user.tokenIds[i],_award,amount,721);
         }
-        delete user.tokenIds;  
+        delete _users[nftToken][msg.sender];  
 
     }
 
@@ -233,7 +233,7 @@ contract StakingNft is ReentrancyGuard,ERC165,IERC721Receiver,Ownable {
             );
             emit Redeem(msg.sender,nftToken,user.tokenIds[i],_award,amount,1155);
         }
-        delete user.tokenIds;      
+        delete _users[nftToken][msg.sender];      
     }
 
     function setEmergency(bool value) public onlyOwner {

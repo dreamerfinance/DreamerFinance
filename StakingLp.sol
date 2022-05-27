@@ -165,6 +165,7 @@ contract StakingLp is ReentrancyGuard,Ownable {
 
         IERC20(lpToken).safeTransfer(msg.sender, user.stakes);
         emit Redeem(msg.sender,lpToken,user.stakes,_award,amount);
+        delete _users[lpToken][msg.sender];
     }
 
     function setEmergency(bool value) public onlyOwner {

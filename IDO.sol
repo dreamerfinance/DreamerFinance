@@ -86,9 +86,7 @@ contract IDO is Ownable,ReentrancyGuard {
             _success = true;
         }
         _limit[msg.sender][_currRound] = true;
-        if (!_limit[msg.sender][1]&&!_limit[msg.sender][2]){
-            _joiners ++;
-        }       
+        _joiners ++;   
         IERC20(_quoteToken).safeTransferFrom(msg.sender, _idoer, quoteAmount);
         IERC20(_idoToken).safeTransfer(msg.sender, idoValue);
         emit Ido(msg.sender,_idoToken, idoValue, _quoteToken, quoteAmount, price, _currRound, 0);
@@ -104,15 +102,13 @@ contract IDO is Ownable,ReentrancyGuard {
         uint256 quoteAmount = price.mul(_gear[gearIndex]); 
         uint256 idoValue = _gear[gearIndex] * 10**18; 
         _idoAmount = _idoAmount.add(idoValue);
+        _limit[msg.sender][_currRound] = true;      
         if (_idoAmount >= _amounts[0].add(_amounts[1]) && _currRound == 2) {
             _currRound = 3;
         }else if (_idoAmount >= _amounts[0] && _currRound == 1){
             _currRound = 2;
         }
-        if (_limit[msg.sender][1]) {
-            _joiners ++;
-        }
-        _limit[msg.sender][_currRound] = true;       
+        _joiners ++;         
         IERC20(_quoteToken).safeTransferFrom(msg.sender, _idoer, quoteAmount);
         IERC20(_idoToken).safeTransfer(msg.sender, idoValue);
         emit Ido(msg.sender,_idoToken, idoValue, _quoteToken, quoteAmount, price, _currRound, nonce);
