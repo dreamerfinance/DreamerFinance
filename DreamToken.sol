@@ -146,9 +146,10 @@ contract DreamToken is Ownable, IERC20, IERC20Metadata {
         require(_isMining,'Mining no start!');
         require(block.number > _startM,'Mining no start!');
         require(day > _uM[to], 'This day is already taked!'); 
-        require(_mUsed.add(amount) <= _mTotalSupply,'MiningTotalSupply limit!');
+        require(_mUsed.add(amount) <= _mTotalSupply,'MiningTotalSupply limit!');		
         uint month = (block.number - _startM) / (28800 * 30);
-		uint d = (block.number - _startM) / 28800
+		require(_mUsed.add(amount) <= _mLimit[month+1],'Mining month limit!');
+		uint d = (block.number - _startM) / 28800;
         uint p = d % 30 + 1;
         uint limit = p * (_mLimit[month+1] - _mLimit[month]) * 10**18 / 30;
         require(_mUsed.add(amount) <= limit + _mLimit[month] * 10**18,'Mining limit!');             
