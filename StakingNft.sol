@@ -194,7 +194,6 @@ contract StakingNft is ReentrancyGuard,ERC165,IERC721Receiver,Ownable {
 
         pool.totalStakes -= user.stakes;
         for (uint i = 0; i < user.tokenIds.length; i++){
-            delete user.tokenIds[i];
             IERC721(nftToken).transferFrom(address(this),msg.sender,user.tokenIds[i]);
             emit Redeem(msg.sender,nftToken,user.tokenIds[i],_award,amount,721);
         }
